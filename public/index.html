@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>eyebleach</title>
+    <style>
+      
+      body { background-color: skyblue}
+      h1 {color: grey }
+      #wrapper {
+        width: 960px;
+        margin-right: auto;
+      }
+      #notes {
+        width: 50%;
+      }
+      textarea, input {
+        display: block;
+        width: 100%;
+        background-color: #FCF5C7;
+      }
+      input {
+        height: 36px;
+        font-size: 24px;
+      }
+      textarea {
+        height: 200px;
+        font-size: 18px;
+      }
+      table {
+          border-collapse: collapse;
+          table-layout: auto;
+          width: 100%;  
+      }
+      tr:hover {background-color: rgb(135, 156, 250);}
+      table, th, td {
+          border: 1px solid black;
+          color:rgb(99, 96, 96);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1>/R/eyebleach Scraper</h1>
+      <div>
+        <ul><li><a href="/all">All</a></li>
+        <li><a href="/scrape">Scrape</a></li></ul>
+      </div>
+      <div>
+          <table id="Table"><thead><tr>
+          <th>Title</th><th>Author</th><th>Link</th><th>Thumbnail</th><th>Comments</th>
+          </tr></thead><tbody id="Table"></tbody></table></div>
+      <div id="notes"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

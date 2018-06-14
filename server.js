@@ -5,8 +5,16 @@ var mongojs = require("mongojs");
 var request = require("request");
 var cheerio = require("cheerio");
 
+var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost/week18Populater");
+
+var Note = require("./public/Note")
+
 // Initialize Express
 var app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
 // Database configuration
 var databaseUrl = "scraper";
@@ -18,22 +26,8 @@ db.on("error", function(error) {
   console.log("Database Error:", error);
 });
 
-// Main route (simple Hello World Message)
-app.get("/", function(req, res) {
-  // res.send("Hello world");
-  var index = '<ul><li><a href="/all">All</a></li>';
-  index += '<li><a href="/scrape">Scrape</a></li></ul>';
-  res.send(index);
-});
-
 // Retrieve data from the db
 app.get("/all", function(req, res) {
-  
-  // var entries = [];
-  // for (i=0; i< db.scrapedData.length; i++){
-  //   entries[i] = db.scrapedData.length
-  // }
-
   // Find all results from the scrapedData collection in the db
   db.scrapedData.find({}, function(error, found) {
     // Throw any errors to the console
@@ -47,10 +41,11 @@ app.get("/all", function(req, res) {
   });
 });
 
-
-app.get("/repeat", function(req, res) {
-  // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({"title":"The smiling Sphinx."}, function(error, found) {
+// Route for grabbing a specific Article by id, populate it with it's note
+app.get("/all/:id", function(req, res) {
+  var id = req.params.id;
+  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+  db.scrapedData.find({'_id': db.ObjectId(id)}, function(error, found) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
@@ -59,7 +54,36 @@ app.get("/repeat", function(req, res) {
     else {
       res.json(found);
     }
-  });
+  })
+    // // ..and populate all of the notes associated with it
+    // console.log(id);
+    // db.scrapedData.find({"_id" : db.ObjectId(req.params.id)})
+    // // .populate("note")
+    // .then(function(dbArticle) {
+    //   console.log(dbArticle);
+    //   // If we were able to successfully find an Article with the given id, send it back to the client
+    //   res.json(dbArticle);
+    // })
+    // .catch(function(err) {
+    //   // If an error occurred, send it to the client
+    //   res.json(err);
+    // });
+});
+
+
+app.post("/all/:id", function(req, res) {
+    var id = req.params.id;
+  Note.create(req.body)
+    .then(function(dbNote) {
+      // console.log(dbNote);
+      db.scrapedData.update({ "_id": db.ObjectId(id) }, {$set: {"note" : dbNote} }, { new: true });
+    }).then(function(dbPost) {
+      // console.log(dbPost);
+      res.json(dbPost);
+    }).catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
 });
 
 
@@ -89,10 +113,11 @@ app.get("/scrape", function(req, res) {
             console.log("Not found");
             db.scrapedData.insert({
               title: title,
-              link: link,
               author: author,
+              link: link,
               thumbnail: thumbnail,
-              comments: comments 
+              comments: comments,
+              // usercomments: 
             },
             function(err, inserted) {
               if (err) {
@@ -110,27 +135,6 @@ app.get("/scrape", function(req, res) {
           }
         });
       }
-
-      // if (title && link && author && thumbnail && comments) {
-      //   // Insert the data in the scrapedData db
-      //   db.scrapedData.insert({
-      //     title: title,
-      //     link: link,
-      //     author: author,
-      //     thumbnail: thumbnail,
-      //     comments: comments 
-      //   },
-      //   function(err, inserted) {
-      //     if (err) {
-      //       // Log the error if one is encountered during the query
-      //       console.log(err);
-      //     }
-      //     else {
-      //       // Otherwise, log the inserted data
-      //       console.log(inserted);
-      //     }
-      //   });
-      // }
     });
   });
 
