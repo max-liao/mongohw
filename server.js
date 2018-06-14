@@ -4,10 +4,16 @@ var mongojs = require("mongojs");
 // Require request and cheerio. This makes the scraping possible
 var request = require("request");
 var cheerio = require("cheerio");
-
 var bodyParser = require("body-parser");
+
 var mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/week18Populater");
+// mongoose.connect("mongodb://localhost/");
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraper";
+// Set mongoose to leverage built in JavaScript ES6 Promises
+// Connect to the Mongo DB
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
 
 var Note = require("./public/Note")
 
@@ -55,21 +61,7 @@ app.get("/all/:id", function(req, res) {
       res.json(found);
     }
   })
-    // // ..and populate all of the notes associated with it
-    // console.log(id);
-    // db.scrapedData.find({"_id" : db.ObjectId(req.params.id)})
-    // // .populate("note")
-    // .then(function(dbArticle) {
-    //   console.log(dbArticle);
-    //   // If we were able to successfully find an Article with the given id, send it back to the client
-    //   res.json(dbArticle);
-    // })
-    // .catch(function(err) {
-    //   // If an error occurred, send it to the client
-    //   res.json(err);
-    // });
 });
-
 
 app.post("/all/:id", function(req, res) {
     var id = req.params.id;
