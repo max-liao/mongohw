@@ -9,7 +9,7 @@ var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 // mongoose.connect("mongodb://localhost/");
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraper";
+var MONGODB_URI = "mongodb://heroku_11d8ncjs:b277du6tdk8qoutj3e239er5ne@ds255740.mlab.com:55740/heroku_11d8ncjs" || "mongodb://localhost/scraper";
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
