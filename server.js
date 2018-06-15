@@ -8,16 +8,19 @@ var bodyParser = require("body-parser");
 
 var mongoose = require("mongoose");
 // mongoose.connect("mongodb://localhost/");
+
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 var MONGODB_URI = "mongodb://heroku_11d8ncjs:b277du6tdk8qoutj3e239er5ne@ds255740.mlab.com:55740/heroku_11d8ncjs" || "mongodb://localhost/scraper";
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI);
+mongoose.connect(MONGODB_URI)
+console.log(mongoose.connect(MONGODB_URI));
 
 var Note = require("./public/Note")
 
 // Initialize Express
+var PORT = process.env.PORT || 3000;
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -137,6 +140,6 @@ app.get("/scrape", function(req, res) {
 
 
 // Listen on port 3000
-app.listen(3000, function() {
-  console.log("App running on port 3000!");
+app.listen(PORT, function() {
+  console.log(`App running on port ${PORT}!`);
 });
